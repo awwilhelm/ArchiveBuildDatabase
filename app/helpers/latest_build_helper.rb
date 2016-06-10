@@ -1,0 +1,2 @@
+module LatestBuildHelper
+end

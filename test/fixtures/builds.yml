@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  build_id: 1
+  architecture_type: MyString
+  zip_type: MyString
+  filepath: MyText
+  time: 2016-06-09 17:10:42
+
+two:
+  build_id: 1
+  architecture_type: MyString
+  zip_type: MyString
+  filepath: MyText
+  time: 2016-06-09 17:10:42

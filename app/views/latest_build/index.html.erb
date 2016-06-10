@@ -1,0 +1,67 @@
+<h1>Download latest build</h1>
+<table>
+	<tr>
+    	<th>Title</th>
+    	<th>Text</th>
+    	<th colspan="2"></th>
+  	</tr>
+ 
+  	<% @builds.each do |t| %>
+    	<tr>
+      		<td><%= t.name %></td>
+      		<td><%= t.url %></td>
+    	</tr>
+  	<% end %>
+
+
+
+  	<%= button_to "Get_latest_download", action: "create" %>
+</table>
+
+<%= form_for @build, url: latest_build do |f| %>
+ 
+  <% if @build.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@build.errors.count, "error") %> prohibited
+        this build from being saved:
+      </h2>
+      <ul>
+        <% @build.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+ 
+  <p>
+    <%= f.label :build_id %><br>
+    <%= f.text_field :build_id %>
+  </p>
+ 
+  <p>
+    <%= f.label :architecture_type %><br>
+    <%= f.text_area :architecture_type %>
+  </p>
+
+  <p>
+    <%= f.label :zip_type %><br>
+    <%= f.text_field :zip_type %>
+  </p>
+ 
+  <p>
+    <%= f.label :filepath %><br>
+    <%= f.text_area :filepath %>
+  </p>
+
+  <p>
+    <%= f.label :time %><br>
+    <%= f.text_field :time %>
+  </p>
+ 
+  <p>
+    <%= f.submit %>
+  </p>
+ 
+<% end %>
+
