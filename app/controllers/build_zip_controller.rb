@@ -1,0 +1,2 @@
+class BuildZipController < ApplicationController
+end

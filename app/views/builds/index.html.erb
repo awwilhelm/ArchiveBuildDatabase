@@ -5,7 +5,6 @@
       <th>Text</th>
       <th colspan="2"></th>
     </tr>
- 
     <% @builds.each do |t| %>
       <tr>
           <td><%= t.build_id %></td>
@@ -13,6 +12,7 @@
           <td><%= t.zip_type %></td>
           <td><%= t.filepath %></td>
           <td><%= t.time %></td>
+          <td><%= link_to "Download", build_download_path(t)   %></td>
           <td><%= link_to 'Destroy', build_path(t),
               method: :delete %></td>
       </tr>
