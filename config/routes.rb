@@ -5,8 +5,6 @@ Rails.application.routes.draw do
   resources :builds do
     get :download_windows32
     get :download_windows64
-    get :download_mac
-    get :download_mac64
     get :download_mac_universal
   end
   

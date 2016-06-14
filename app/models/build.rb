@@ -54,8 +54,6 @@ class Build < ActiveRecord::Base
 		build = Build.new
 		@build_windows32 = true
 		@build_windows64 = true
-		@build_mac = false
-		@build_mac64 = false
 		@build_mac_universal = false
 
 		current_build_id = Build.increment_build_id
@@ -81,31 +79,23 @@ class Build < ActiveRecord::Base
 
 
 		#Cloning
-		puts "-- Cloning the following Git Repository: #{@github_url} --\n\n"
+		puts "\n-- Cloning the following Git Repository: #{@github_url} --\n\n"
 		result = %x(git clone #{@github_url} #{@assets_folder})
 		puts result
 
 		#Create Build
-		puts "-- Creating all of the Unity builds --\n"
+		puts "-- Creating all of the Unity builds --\n\n"
 		result = %x("#{@unity_path}" -quit -batchmode -executeMethod BuildScript.All -projectPath "#{@project_path}")
 		puts result
 #
 		##Zip Build folder
-		puts "-- Compressing Build files --\n"
+		puts "-- Compressing Build files --\n\n"
 		if @build_windows32
 			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneWindows32.tar.gz StandaloneWindows32)
 			puts result
 		end
 		if @build_windows64
 			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneWindows64.tar.gz StandaloneWindows64)
-			puts result
-		end
-		if @build_mac
-			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneOSXIntel.tar.gz StandaloneOSXIntel)
-			puts result
-		end
-		if @build_mac64
-			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneOSXIntel64.tar.gz StandaloneOSXIntel64)
 			puts result
 		end
 		if @build_mac_universal
@@ -121,13 +111,15 @@ class Build < ActiveRecord::Base
 		#puts result
 
 		#Define the different builds into an array of Build Models
+		simple_build_id = current_build_id_str.gsub(".", "")
+		simple_build_id = simple_build_id.gsub("_", "")
 		build.build_id			= current_build_id_str
+		build.simple_build_id 	= simple_build_id
 		build.windows32 		= @build_windows32 
 		build.windows64 		= @build_windows64
-		build.mac 				= @build_mac
-		build.mac64 			= @build_mac64
 		build.mac_universal 	= @build_mac_universal
 		build.filepath 			= "#{@project_path}\\Build"
+		build.release_notes		= "Hello this is a test"
 		build.time				= Time.now
 
 		return build

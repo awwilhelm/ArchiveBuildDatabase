@@ -1,70 +1,77 @@
 <body>
-<div  class="site-wrapper" style="width: 90%; margin: 0 auto;">
+<div  class="container" style="width: 90%; margin: 0 auto;">
   <h1>Download latest build</h1>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-              <th>Build Number</th>
-              <th>Windows 32</th>
-              <th>Windows 64</th>
-              <th>Mac</th>
-              <th>Mac 64</th>
-              <th>Mac Universal</th>
-              <th>Build Path</th>
-              <th>Time Created</th>
-              <th colspan="2"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @builds.each do |t| %>
-            <tr>
-                <td><%= t.build_id %></td>
-                <td>
-                    <% if t.windows32 == true %>
-                      <%= link_to "Download", build_download_windows32_path(t)   %>
-                    <% else%>
-                      <b>No build</b>
-                    <% end%>
-                </td>
-                <td>
-                    <% if t.windows64 == true %>
-                      <%= link_to "Download", build_download_windows64_path(t)   %>
-                    <% else%>
-                      <b>No build</b>
-                    <% end%>
-                </td>
-                <td>
-                    <% if t.mac == true %>
-                      <%= link_to "Download", build_download_mac_path(t)   %>
-                    <% else%>
-                      <b>No build</b>
-                    <% end%>
-                </td>
-                <td>
-                    <% if t.mac64 == true %>
-                      <%= link_to "Download", build_download_mac64_path(t)   %>
-                    <% else%>
-                      <b>No build</b>
-                    <% end%>
-                </td>
-                <td>
-                    <% if t.mac_universal == true %>
-                      <%= link_to "Download", build_download_mac_universal_path(t)   %>
-                    <% else%>
-                      <b>No build</b>
-                    <% end%>
-                </td>
-                <td><%= t.filepath %></td>
-                <td><%= t.time %></td>
-                <td><%= link_to 'Destroy', build_path(t),
-                    method: :delete %></td>
-            </tr>
-          <% end %>
+
+  <div class = "row">
+    <div class="col-md-1">
+      <h4>Build</h4>
+    </div>
+    <div class="col-md-1">
+      <h4>Download</h4>
+    </div>
+    <div class="col-md-2">
+      <h4>Release Time</h4>
+    </div>
+    <div class="col-md-1">
+      <h4>Destroy</h4>
+    </div>
+  </div>
+  <hr>
+
+  <% @builds.each do |t| %>
+  <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <div class = "row">
+              <div class="col-md-1">
+                <a data-toggle="collapse" href="#<%= t.simple_build_id %>"><%= t.build_id %></a>
+              </div>
+              <div class="col-md-1">
+                <% if OS.windows? && OS.bits == 32 %>
+                  <% if t.windows32 %>
+                    <%= button_to "Download", build_download_windows32_path(t), :class => "btn btn-default"   %>
+                  <% else%>
+                    <b>No build</b>
+                  <% end%>
+                <% end%>
+              
+                <% if OS.windows? && OS.bits == 64 %>
+                  <% if t.windows64 %>
+                      <%= button_to "Download", build_download_windows64_path(t.build_id), :class => "btn btn-default"   %>
+                  <% else%>
+                    <b>No build</b>
+                  <% end%>
+                <% end%>
+
+                <% if OS.mac?%>
+                  <% if t.mac_universal %>
+                    <%= button_to "Download", build_download_mac_universal_path(t), :class => "btn btn-default"   %>
+                  <% else%>
+                    <b>No build</b>
+                  <% end%>
+                <% end%>
+              </div>
+              <div class="col-md-2" style="vertical-align: middle;"><%= t.time.strftime("%D")%> <span style="padding-left: 20px"><%= t.time.strftime("%r")%></span></div>
+              <div class="col-md-1"><%= button_to 'Destroy', build_path(t), :class => "btn btn-danger",
+                  method: :delete %>
+              </div>
+            </div>
+          </div>
+
+        <div id="<%= t.simple_build_id %>" class="panel-collapse collapse">
+          <div class="panel-body">
+            <textarea><%= t.release_notes %></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
 
 
+    <hr width="98%">
+  <% end %>
 
-          </tbody>
-      </table>
 
   <%= form_for :build do |f| %>
    

@@ -1,3 +1,5 @@
+require 'os'
+
 class BuildsController < ApplicationController
 	def index
 
@@ -6,9 +8,10 @@ class BuildsController < ApplicationController
 		@build = Build.new
 		@builds = Build.all
 
-		@builds.each do |val|
-			puts val.id
+		@builds = @builds.sort do |val1, val2|
+			val2.time <=> val1.time
 		end
+		Time.zone = "Central Time (US & Canada)"
 
 #		@build.each do |val|
 #			#puts val.destroy
@@ -27,7 +30,8 @@ class BuildsController < ApplicationController
 		@build = Build.generate_zip()
 
 		Time.zone = "Central Time (US & Canada)"
-	 
+		@build.time.in_time_zone("Central Time (US & Canada)")
+
 	  	if @build.save
 	  		redirect_to action: :index
 	  	else
@@ -37,7 +41,6 @@ class BuildsController < ApplicationController
 
 	def destroy
 		@build = Build.find(params[:id])
-		@build.destroy
 
 	    #build_id =  Build.find(params[:id]).build_id
 	    #@build = Build.all.select do |b|
@@ -46,9 +49,11 @@ class BuildsController < ApplicationController
 	    #@build.each do |b|
 	    #	b.destroy
 	    #end
-	    puts "-- Removing #{build_id} from Build Archive --\n"
-	    result = %x(rm -rf app/assets/build_archive/#{build_id})
+	    puts "-- Removing #{@build.build_id} from Build Archive --\n\n"
+	    result = %x(rm -rf app/assets/build_archive/#{@build.build_id})
 		puts result
+
+		@build.destroy
 
 	    redirect_to action: :index
 	end
@@ -61,16 +66,6 @@ class BuildsController < ApplicationController
 		@build = Build.find params[:build_id]
 
   		send_file "#{@build.filepath}/StandaloneWindows64.tar.gz", disposition: 'attachment'
-	end
-	def download_mac
-		@build = Build.find params[:build_id]
-
-  		send_file "#{@build.filepath}/StandaloneOSXIntel.tar.gz", disposition: 'attachment'
-	end
-	def download_mac64
-		@build = Build.find params[:build_id]
-
-  		send_file "#{@build.filepath}/StandaloneOSXIntel64.tar.gz", disposition: 'attachment'
 	end
 	def download_mac_universal
 		@build = Build.find params[:build_id]
