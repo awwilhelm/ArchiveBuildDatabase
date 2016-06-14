@@ -30,7 +30,7 @@
               <div class="col-md-1">
                 <% if OS.windows? && OS.bits == 32 %>
                   <% if t.windows32 %>
-                    <%= button_to "Download", build_download_windows32_path(t), :class => "btn btn-default"   %>
+                    <%= link_to "Download", build_download_windows32_path(t), :class => "btn btn-default"   %>
                   <% else%>
                     <b>No build</b>
                   <% end%>
@@ -38,7 +38,7 @@
               
                 <% if OS.windows? && OS.bits == 64 %>
                   <% if t.windows64 %>
-                      <%= button_to "Download", build_download_windows64_path(t.build_id), :class => "btn btn-default"   %>
+                      <%= link_to "Download", build_download_windows64_path(t), :class => "btn btn-default"   %>
                   <% else%>
                     <b>No build</b>
                   <% end%>
@@ -46,7 +46,7 @@
 
                 <% if OS.mac?%>
                   <% if t.mac_universal %>
-                    <%= button_to "Download", build_download_mac_universal_path(t), :class => "btn btn-default"   %>
+                    <%= link_to "Download", build_download_mac_universal_path(t), :class => "btn btn-default"   %>
                   <% else%>
                     <b>No build</b>
                   <% end%>
