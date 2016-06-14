@@ -26,11 +26,9 @@ class BuildsController < ApplicationController
 	def create
 		@build = Build.generate_zip()
 
-
 		Time.zone = "Central Time (US & Canada)"
 	 
-	  	if @build.each do |b|
-	  		b.save end
+	  	if @build.save
 	  		redirect_to action: :index
 	  	else
 	  		render 'new'
@@ -38,25 +36,46 @@ class BuildsController < ApplicationController
 	end
 
 	def destroy
-	    build_id =  Build.find(params[:id]).build_id
-	    @build = Build.all.select do |b|
-	    	b.build_id == build_id
-	    end
-	    @build.each do |b|
-	    	b.destroy
-	    end
+		@build = Build.find(params[:id])
+		@build.destroy
+
+	    #build_id =  Build.find(params[:id]).build_id
+	    #@build = Build.all.select do |b|
+	    #	b.build_id == build_id
+	    #end
+	    #@build.each do |b|
+	    #	b.destroy
+	    #end
 	    puts "-- Removing #{build_id} from Build Archive --\n"
 	    result = %x(rm -rf app/assets/build_archive/#{build_id})
 		puts result
 
 	    redirect_to action: :index
 	end
-	def download
-		puts "------------Work _-----------------"
-		#item = Build.find params[:id]
+	def download_windows32
+		@build = Build.find params[:build_id]
 
-  		send_file "app/assets/build_archive/Build_0.0.1/Build/StandaloneWindows64.tar.gz", disposition: 'attachment'
-	    #redirect_to action: :index
+  		send_file "#{@build.filepath}/StandaloneWindows32.tar.gz", disposition: 'attachment'
+	end
+	def download_windows64
+		@build = Build.find params[:build_id]
+
+  		send_file "#{@build.filepath}/StandaloneWindows64.tar.gz", disposition: 'attachment'
+	end
+	def download_mac
+		@build = Build.find params[:build_id]
+
+  		send_file "#{@build.filepath}/StandaloneOSXIntel.tar.gz", disposition: 'attachment'
+	end
+	def download_mac64
+		@build = Build.find params[:build_id]
+
+  		send_file "#{@build.filepath}/StandaloneOSXIntel64.tar.gz", disposition: 'attachment'
+	end
+	def download_mac_universal
+		@build = Build.find params[:build_id]
+
+  		send_file "#{@build.filepath}/StandaloneOSXUniversal.tar.gz", disposition: 'attachment'
 	end
 
 	private

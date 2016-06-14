@@ -3,8 +3,14 @@ Rails.application.routes.draw do
 
   #resources :latest_build
   resources :builds do
-    get :download
+    get :download_windows32
+    get :download_windows64
+    get :download_mac
+    get :download_mac64
+    get :download_mac_universal
   end
+  
+  #get 'builds/:build_id/download/:id' => 'builds#full_download'
 
  #resources :builds do
  #   resources :build_zip

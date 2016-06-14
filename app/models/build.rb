@@ -51,13 +51,12 @@ class Build < ActiveRecord::Base
 	end
 
 	def Build.generate_zip()
-		build = Array.new
-		buildTarWindows32 = Build.new
-		buildTarWindows64 = Build.new
-		buildTarMacIntel = Build.new
-		buildTarMacIntel64 = Build.new
-		buildTarMacUniversal = Build.new
-
+		build = Build.new
+		@build_windows32 = true
+		@build_windows64 = true
+		@build_mac = false
+		@build_mac64 = false
+		@build_mac_universal = false
 
 		current_build_id = Build.increment_build_id
 
@@ -82,7 +81,7 @@ class Build < ActiveRecord::Base
 
 
 		#Cloning
-		puts "-- Cloning the following Git Repository: #{@github_url} --\n"
+		puts "-- Cloning the following Git Repository: #{@github_url} --\n\n"
 		result = %x(git clone #{@github_url} #{@assets_folder})
 		puts result
 
@@ -92,10 +91,27 @@ class Build < ActiveRecord::Base
 		puts result
 #
 		##Zip Build folder
-		result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneWindows32.tar.gz StandaloneWindows32)
-		puts result
-		result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneWindows64.tar.gz StandaloneWindows64)
-		puts result
+		puts "-- Compressing Build files --\n"
+		if @build_windows32
+			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneWindows32.tar.gz StandaloneWindows32)
+			puts result
+		end
+		if @build_windows64
+			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneWindows64.tar.gz StandaloneWindows64)
+			puts result
+		end
+		if @build_mac
+			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneOSXIntel.tar.gz StandaloneOSXIntel)
+			puts result
+		end
+		if @build_mac64
+			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneOSXIntel64.tar.gz StandaloneOSXIntel64)
+			puts result
+		end
+		if @build_mac_universal
+			result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneOSXUniversal.tar.gz StandaloneOSXUniversal)
+			puts result
+		end
 
 		#result = %x(cd app/assets/build_archive/#{current_build_id_str}/Build && tar -zcvf StandaloneOSXIntel.tar.gz StandaloneOSXIntel)
 		#puts result
@@ -105,29 +121,14 @@ class Build < ActiveRecord::Base
 		#puts result
 
 		#Define the different builds into an array of Build Models
-		buildTarWindows32.build_id = buildTarWindows64.build_id = buildTarMacIntel.build_id = buildTarMacIntel64.build_id = buildTarMacUniversal.build_id 			= current_build_id_str 
-
-		buildTarWindows32.architecture_type 	= "Windows32"
-		buildTarWindows64.architecture_type 	= "Windows64"
-		buildTarMacIntel.architecture_type 		= "Mac"
-		buildTarMacIntel64.architecture_type 	= "Mac64"
-		buildTarMacUniversal.architecture_type 	= "MacUniversal"
-
-		buildTarWindows32.zip_type = buildTarWindows64.zip_type = buildTarMacIntel.zip_type = buildTarMacIntel64.zip_type = buildTarMacUniversal.zip_type			= "tar"
-
-		buildTarWindows32.filepath 				= "#{@project_path}\\Build\\StandaloneWindows32.tar.gz"
-		buildTarWindows64.filepath 				= "#{@project_path}\\Build\\StandaloneWindows64.tar.gz"
-		buildTarMacIntel.filepath 				= "#{@project_path}\\Build\\StandaloneOSXIntel.tar.gz"
-		buildTarMacIntel64.filepath 			= "#{@project_path}\\Build\\StandaloneOSXIntel64.tar.gz"
-		buildTarMacUniversal.filepath 			= "#{@project_path}\\Build\\StandaloneOSXUniversal.tar.gz"
-
-		buildTarWindows32.time = buildTarWindows64.time = buildTarMacIntel.time = buildTarMacIntel64.time = buildTarMacUniversal.time 								= Time.now
-
-		build.push(buildTarWindows32)
-		build.push(buildTarWindows64)
-		#build.push(buildTarMacIntel)
-		#build.push(buildTarMacIntel64)
-		#build.push(buildTarMacUniversal)
+		build.build_id			= current_build_id_str
+		build.windows32 		= @build_windows32 
+		build.windows64 		= @build_windows64
+		build.mac 				= @build_mac
+		build.mac64 			= @build_mac64
+		build.mac_universal 	= @build_mac_universal
+		build.filepath 			= "#{@project_path}\\Build"
+		build.time				= Time.now
 
 		return build
 

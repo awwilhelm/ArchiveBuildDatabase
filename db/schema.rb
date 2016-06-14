@@ -15,12 +15,15 @@ ActiveRecord::Schema.define(version: 20160609221042) do
 
   create_table "builds", force: :cascade do |t|
     t.string   "build_id"
-    t.string   "architecture_type"
-    t.string   "zip_type"
+    t.boolean  "windows32"
+    t.boolean  "windows64"
+    t.boolean  "mac"
+    t.boolean  "mac64"
+    t.boolean  "mac_universal"
     t.text     "filepath"
     t.datetime "time"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "temps", force: :cascade do |t|

@@ -1,68 +1,103 @@
-<h1>Download latest build</h1>
-<table>
-  <tr>
-      <th>Title</th>
-      <th>Text</th>
-      <th colspan="2"></th>
-    </tr>
-    <% @builds.each do |t| %>
-      <tr>
-          <td><%= t.build_id %></td>
-          <td><%= t.architecture_type %></td>
-          <td><%= t.zip_type %></td>
-          <td><%= t.filepath %></td>
-          <td><%= t.time %></td>
-          <td><%= link_to "Download", build_download_path(t)   %></td>
-          <td><%= link_to 'Destroy', build_path(t),
-              method: :delete %></td>
-      </tr>
+<body>
+<div  class="site-wrapper" style="width: 90%; margin: 0 auto;">
+  <h1>Download latest build</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+              <th>Build Number</th>
+              <th>Windows 32</th>
+              <th>Windows 64</th>
+              <th>Mac</th>
+              <th>Mac 64</th>
+              <th>Mac Universal</th>
+              <th>Build Path</th>
+              <th>Time Created</th>
+              <th colspan="2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @builds.each do |t| %>
+            <tr>
+                <td><%= t.build_id %></td>
+                <td>
+                    <% if t.windows32 == true %>
+                      <%= link_to "Download", build_download_windows32_path(t)   %>
+                    <% else%>
+                      <b>No build</b>
+                    <% end%>
+                </td>
+                <td>
+                    <% if t.windows64 == true %>
+                      <%= link_to "Download", build_download_windows64_path(t)   %>
+                    <% else%>
+                      <b>No build</b>
+                    <% end%>
+                </td>
+                <td>
+                    <% if t.mac == true %>
+                      <%= link_to "Download", build_download_mac_path(t)   %>
+                    <% else%>
+                      <b>No build</b>
+                    <% end%>
+                </td>
+                <td>
+                    <% if t.mac64 == true %>
+                      <%= link_to "Download", build_download_mac64_path(t)   %>
+                    <% else%>
+                      <b>No build</b>
+                    <% end%>
+                </td>
+                <td>
+                    <% if t.mac_universal == true %>
+                      <%= link_to "Download", build_download_mac_universal_path(t)   %>
+                    <% else%>
+                      <b>No build</b>
+                    <% end%>
+                </td>
+                <td><%= t.filepath %></td>
+                <td><%= t.time %></td>
+                <td><%= link_to 'Destroy', build_path(t),
+                    method: :delete %></td>
+            </tr>
+          <% end %>
+
+
+
+          </tbody>
+      </table>
+
+  <%= form_for :build do |f| %>
+   
+    <% if @build.errors.any? %>
+      <div id="error_explanation">
+        <h2>
+          <%= pluralize(@build.errors.count, "error") %> prohibited
+          this build from being saved:
+        </h2>
+        <ul>
+          <% @build.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
-
-
-
-    <%= button_to "Get_latest_download", action: "create" %>
-</table>
-
-<%= form_for :build do |f| %>
- 
-  <% if @build.errors.any? %>
-    <div id="error_explanation">
-      <h2>
-        <%= pluralize(@build.errors.count, "error") %> prohibited
-        this build from being saved:
-      </h2>
-      <ul>
-        <% @build.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
+   <!--
+   cellspacing="20" rules="value" 
+    <p>
+      <%= f.label :build_id %><br>
+      <%= f.text_field :build_id %>
+    </p>
+   
+    <p>
+      <%= f.label :filepath %><br>
+      <%= f.text_area :filepath %>
+    </p>
+   
+   -->
+    <p>
+      <%= f.submit %>
+    </p>
+   
   <% end %>
- <!--
-  <p>
-    <%= f.label :build_id %><br>
-    <%= f.text_field :build_id %>
-  </p>
- 
-  <p>
-    <%= f.label :architecture_type %><br>
-    <%= f.text_field :architecture_type %>
-  </p>
-
-  <p>
-    <%= f.label :zip_type %><br>
-    <%= f.text_field :zip_type %>
-  </p>
- 
-  <p>
-    <%= f.label :filepath %><br>
-    <%= f.text_area :filepath %>
-  </p>
- 
- -->
-  <p>
-    <%= f.submit %>
-  </p>
- 
-<% end %>
-
+  </div>
+</body>
